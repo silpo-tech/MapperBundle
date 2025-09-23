@@ -7,7 +7,7 @@ interface MapperInterface
     /**
      * @template T of object
      *
-     * @param array|object $source
+     * @param array|object             $source
      * @param T|class-string<T>|string $destination
      *
      * @return T|array
@@ -17,7 +17,6 @@ interface MapperInterface
     /**
      * @template T of object
      *
-     * @param array|object $source
      * @param T|class-string<T> $destination
      *
      * @return T
@@ -29,7 +28,6 @@ interface MapperInterface
     /**
      * @template T of object
      *
-     * @param iterable $sources
      * @param class-string<T> $destination
      *
      * @return iterable<T>
@@ -39,7 +37,6 @@ interface MapperInterface
     /**
      * @template T of object
      *
-     * @param iterable $sources
      * @param class-string<T> $destination
      *
      * @return iterable<T>

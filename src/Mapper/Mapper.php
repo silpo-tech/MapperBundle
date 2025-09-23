@@ -13,7 +13,7 @@ use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
 use Symfony\Component\PropertyInfo\Type;
 
 /**
- * Class Mapper
+ * Class Mapper.
  */
 class Mapper implements MapperInterface
 {
@@ -32,11 +32,6 @@ class Mapper implements MapperInterface
      */
     private $preLoader;
 
-    /**
-     * @param AutoMapperInterface $autoMapper
-     * @param PropertyInfoExtractor $extractor
-     * @param PreloaderInterface $preLoader
-     */
     public function __construct(
         AutoMapperInterface $autoMapper,
         PropertyInfoExtractor $extractor,
@@ -48,7 +43,7 @@ class Mapper implements MapperInterface
     }
 
     /**
-     * @param array|object $source
+     * @param array|object        $source
      * @param array|object|string $destination
      *
      * @return array|mixed|object|null
@@ -66,8 +61,6 @@ class Mapper implements MapperInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @throws UnregisteredMappingException
      */
     public function convertToObject(array|object $source, string|object $destination): object
@@ -83,12 +76,6 @@ class Mapper implements MapperInterface
         return $this->convert($source, DataType::ARRAY);
     }
 
-    /**
-     * @param iterable $sources
-     * @param string $destination
-     *
-     * @return iterable
-     */
     public function convertCollection(iterable $sources, string $destination): iterable
     {
         if (empty($sources)) {
@@ -107,12 +94,6 @@ class Mapper implements MapperInterface
         return $this->autoMapper->mapMultiple($sources, $destination);
     }
 
-    /**
-     * @param iterable $sources
-     * @param string $destination
-     *
-     * @return iterable
-     */
     public function convertCollectionWithPreLoader(iterable $sources, string $destination): iterable
     {
         if (empty($sources)) {
@@ -133,15 +114,15 @@ class Mapper implements MapperInterface
     }
 
     /**
-     * @param array|object $source
+     * @param array|object        $source
      * @param array|object|string $destination
      */
     private function autoConfiguration($source, $destination): void
     {
         $destination = is_object($destination) ? get_class($destination) : $destination;
         if (
-            !is_array($source) ||
-            $this->autoMapper->getConfiguration()->hasMappingFor('array', $destination)
+            !is_array($source)
+            || $this->autoMapper->getConfiguration()->hasMappingFor('array', $destination)
         ) {
             return;
         }
@@ -149,9 +130,6 @@ class Mapper implements MapperInterface
         $this->createSchemaForMapping($destination);
     }
 
-    /**
-     * @param string $destination
-     */
     private function createSchemaForMapping(string $destination): void
     {
         $config = $this->autoMapper->getConfiguration();
@@ -175,7 +153,7 @@ class Mapper implements MapperInterface
             } elseif (is_a($propertyInfo->getClassName(), \DateTimeInterface::class, true)) {
                 $innerClass = $propertyInfo->getClassName();
                 $mapping->forMember($property, $this->getDateTimeMappingOperation($property, $innerClass));
-            } elseif ($propertyInfo->getBuiltinType() === 'object') {
+            } elseif ('object' === $propertyInfo->getBuiltinType()) {
                 $innerClass = $propertyInfo->getClassName();
                 $this->createSchemaForMapping($innerClass);
                 $mapping->forMember($property, Operation::mapTo($innerClass, true));
@@ -199,7 +177,8 @@ class Mapper implements MapperInterface
             if (null === $source[$property]) {
                 return null;
             }
-            return $destinationClass === \DateTimeImmutable::class
+
+            return \DateTimeImmutable::class === $destinationClass
                 ? new \DateTimeImmutable($source[$property])
                 : new \DateTime($source[$property]);
         };

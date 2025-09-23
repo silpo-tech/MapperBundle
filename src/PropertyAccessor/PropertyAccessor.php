@@ -3,25 +3,21 @@
 namespace MapperBundle\PropertyAccessor;
 
 use AutoMapperPlus\PropertyAccessor\PropertyAccessor as BasePropertyAccessor;
-use Throwable;
 
 /**
- * Class PropertyAccessor
+ * Class PropertyAccessor.
  */
 class PropertyAccessor extends BasePropertyAccessor
 {
-    /**
-     * @inheritdoc
-     */
     public function setProperty($object, string $propertyName, $value): void
     {
-        $setter = 'set' . ucfirst($propertyName);
+        $setter = 'set'.ucfirst($propertyName);
         if ($this->isSetterExists($object, $setter)) {
             try {
                 $object->$setter($value);
 
                 return;
-            } catch (Throwable $exception) {
+            } catch (\Throwable $exception) {
                 // method is private or strict typehint is invalid. Skip this step
             }
         }
@@ -31,7 +27,7 @@ class PropertyAccessor extends BasePropertyAccessor
                 $object->$propertyName = $value;
 
                 return;
-            } catch (Throwable $exception) {
+            } catch (\Throwable $exception) {
                 // property is private or strict typehint is invalid. Skip this step
             }
         }
@@ -46,7 +42,7 @@ class PropertyAccessor extends BasePropertyAccessor
 
     private function isUndefinedExistingValue($object, string $propertyName): bool
     {
-        return property_exists($object, $propertyName) &&
-            !isset($object->$propertyName);
+        return property_exists($object, $propertyName)
+            && !isset($object->$propertyName);
     }
 }

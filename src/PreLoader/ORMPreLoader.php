@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace MapperBundle\PreLoader;
 
 use Doctrine\ORM\EntityManagerInterface;
-use ReflectionClass;
 
 readonly class ORMPreLoader implements PreloaderInterface
 {
@@ -19,7 +18,7 @@ readonly class ORMPreLoader implements PreloaderInterface
             return $sourceCollection;
         }
 
-        $reflection = new ReflectionClass($sourceCollection[0]);
+        $reflection = new \ReflectionClass($sourceCollection[0]);
         $sourceProperties = $reflection->getProperties();
 
         foreach ($this->collectRelations($sourceCollection, $sourceProperties, $registeredMappingOperations) as $group) {
@@ -77,7 +76,7 @@ readonly class ORMPreLoader implements PreloaderInterface
         $batchSize = $this->em->getConfiguration()->getEagerFetchBatchSize();
 
         foreach (array_chunk($collections, $batchSize, true) as $collectionBatch) {
-            $entities = array_map(fn($collection) => $collection->getOwner(), $collectionBatch);
+            $entities = array_map(fn ($collection) => $collection->getOwner(), $collectionBatch);
             $found = $this->em->getRepository($targetEntity)->findBy([$mappedBy => $entities]);
             $targetClass = $this->em->getClassMetadata($targetEntity);
             $targetProperty = $targetClass->getReflectionProperty($mappedBy);

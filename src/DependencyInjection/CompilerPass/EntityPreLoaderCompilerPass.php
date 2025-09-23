@@ -9,9 +9,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class EntityPreLoaderCompilerPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
     public function process(ContainerBuilder $container): void
     {
         if (true === $container->hasDefinition('doctrine')) {

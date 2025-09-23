@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace MapperBundle\Tests\TestCase\Unit\Stubs;
 
-use IteratorAggregate;
-use ArrayIterator;
 use MapperBundle\Tests\TestCase\Unit\Stubs\Entity\SourceEntity;
 use MapperBundle\Tests\TestCase\Unit\Stubs\Entity\TargetEntity;
-use Traversable;
 
-class FakePersistentCollection implements IteratorAggregate
+class FakePersistentCollection implements \IteratorAggregate
 {
     public array $values = [];
     public bool $wasInitialized = false;
@@ -57,8 +54,8 @@ class FakePersistentCollection implements IteratorAggregate
         $this->snapshotTaken = true;
     }
 
-    public function getIterator(): Traversable
+    public function getIterator(): \Traversable
     {
-        return new ArrayIterator([]);
+        return new \ArrayIterator([]);
     }
 }

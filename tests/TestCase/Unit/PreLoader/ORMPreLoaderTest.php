@@ -88,7 +88,7 @@ class ORMPreLoaderTest extends TestCase
             ->method('findBy')
             ->willReturn([new TargetEntity($entity), new TargetEntity($entity)]);
         $this->em->method('getRepository')->willReturnCallback(function ($class) use ($repositoryMock) {
-            if ($class === TargetEntity::class) {
+            if (TargetEntity::class === $class) {
                 return $repositoryMock;
             }
 

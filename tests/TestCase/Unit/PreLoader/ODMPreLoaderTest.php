@@ -6,7 +6,6 @@ namespace MapperBundle\Tests\TestCase\Unit\PreLoader;
 
 use MapperBundle\PreLoader\ODMPreLoader;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 class ODMPreLoaderTest extends TestCase
 {
@@ -19,7 +18,7 @@ class ODMPreLoaderTest extends TestCase
 
     public function testPreLoadThrowsRuntimeException(): void
     {
-        $this->expectException(RuntimeException::class);
+        $this->expectException(\RuntimeException::class);
 
         $this->preLoader->preLoad([], []);
     }

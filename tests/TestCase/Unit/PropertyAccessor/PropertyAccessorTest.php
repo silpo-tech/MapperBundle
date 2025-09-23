@@ -59,7 +59,7 @@ class PropertyAccessorTest extends TestCase
         try {
             $this->accessor->setProperty($object, 'name', 'John');
         } catch (\Throwable $e) {
-            $this->fail("Unexpected exception thrown: " . $e->getMessage());
+            $this->fail('Unexpected exception thrown: '.$e->getMessage());
         }
     }
 }

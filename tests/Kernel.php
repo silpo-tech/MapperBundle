@@ -19,17 +19,17 @@ class Kernel extends HttpKernel
 
     public function getConfigDir(): string
     {
-        return $this->getProjectDir() . '/src/Resources/config';
+        return $this->getProjectDir().'/src/Resources/config';
     }
 
     public function getCacheDir(): string
     {
-        return sys_get_temp_dir() . '/MapperBundle/cache';
+        return sys_get_temp_dir().'/MapperBundle/cache';
     }
 
     public function getLogDir(): string
     {
-        return sys_get_temp_dir() . '/MapperBundle/logs';
+        return sys_get_temp_dir().'/MapperBundle/logs';
     }
 
     public function registerBundles(): iterable
@@ -70,4 +70,3 @@ class Kernel extends HttpKernel
         }
     }
 }
-

@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * MapperBundle
+ * MapperBundle.
  */
 class MapperBundle extends Bundle
 {

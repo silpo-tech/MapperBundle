@@ -6,13 +6,8 @@ namespace MapperBundle\Tests\TestCase\Unit\Mapper;
 
 use AutoMapperPlus\AutoMapperInterface;
 use AutoMapperPlus\Configuration\MappingInterface;
-use AutoMapperPlus\Configuration\Options;
 use AutoMapperPlus\DataType;
 use AutoMapperPlus\Exception\UnregisteredMappingException;
-use AutoMapperPlus\MapperInterface;
-use AutoMapperPlus\MappingOperation\MappingOperationInterface;
-use AutoMapperPlus\NameConverter\NamingConvention\NamingConventionInterface;
-use AutoMapperPlus\NameResolver\NameResolverInterface;
 use MapperBundle\Configuration\AutoMapperConfig;
 use MapperBundle\Mapper\Mapper;
 use MapperBundle\PreLoader\PreloaderInterface;
@@ -150,7 +145,7 @@ class MapperTest extends TestCase
             ->with($destinationClass, 'createdAt')
             ->willReturn([$type]);
 
-        $mappingMock = $this->createMock(\AutoMapperPlus\Configuration\MappingInterface::class);
+        $mappingMock = $this->createMock(MappingInterface::class);
         $mappingMock->method('forMember')->willReturnSelf();
 
         $config = $this->createMock(AutoMapperConfig::class);
