@@ -1,0 +1,67 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Call to an undefined method Traversable\<mixed, mixed\>\:\:getTypeClass\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: src/Mapper/Mapper.php
+
+		-
+			message: '#^Cannot call method getMapping\(\) on iterable\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/PreLoader/ORMPreLoader.php
+
+		-
+			message: '#^Cannot call method getOwner\(\) on iterable\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/PreLoader/ORMPreLoader.php
+
+		-
+			message: '#^Cannot call method isInitialized\(\) on iterable\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: src/PreLoader/ORMPreLoader.php
+
+		-
+			message: '#^Call to an undefined method AutoMapperPlus\\AutoMapperInterface\:\:expects\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: tests/TestCase/Unit/Mapper/MapperTest.php
+
+		-
+			message: '#^Call to an undefined method AutoMapperPlus\\AutoMapperInterface\:\:method\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/TestCase/Unit/Mapper/MapperTest.php
+
+		-
+			message: '#^Call to an undefined method MapperBundle\\PreLoader\\PreloaderInterface\:\:expects\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/TestCase/Unit/Mapper/MapperTest.php
+
+		-
+			message: '#^Call to an undefined method Symfony\\Component\\PropertyInfo\\PropertyInfoExtractor\:\:method\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/TestCase/Unit/Mapper/MapperTest.php
+
+		-
+			message: '#^Call to an undefined method Doctrine\\ORM\\EntityManagerInterface\:\:method\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/TestCase/Unit/PreLoader/ORMPreLoaderTest.php
+
+		-
+			message: '#^Access to an undefined property Doctrine\\Persistence\\Proxy&PHPUnit\\Framework\\MockObject\\MockObject\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/TestCase/Unit/PropertyAccessor/DoctrineProxyPropertyAccessorTest.php
+
+		-
+			message: '#^Property class@anonymous/tests/TestCase/Unit/PropertyAccessor/PropertyAccessorTest\.php\:53\:\:\$name is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: tests/TestCase/Unit/PropertyAccessor/PropertyAccessorTest.php
