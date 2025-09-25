@@ -1,4 +1,4 @@
-# Rest Bundle for Symfony Framework #
+# Mapper Bundle for Symfony Framework #
 
 [![CI](https://github.com/silpo-tech/MapperBundle/actions/workflows/ci.yml/badge.svg)](https://github.com/silpo-tech/MapperBundle/actions)
 [![codecov](https://codecov.io/gh/silpo-tech/MapperBundle/graph/badge.svg)](https://codecov.io/gh/silpo-tech/MapperBundle)
