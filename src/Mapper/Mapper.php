@@ -47,7 +47,7 @@ class Mapper implements MapperInterface
     }
 
     /**
-     * @param array|object $source
+     * @param array|object        $source
      * @param array|object|string $destination
      *
      * @return array|mixed|object|null
@@ -120,7 +120,7 @@ class Mapper implements MapperInterface
     }
 
     /**
-     * @param array|object $source
+     * @param array|object        $source
      * @param array|object|string $destination
      */
     private function autoConfiguration($source, $destination): void
@@ -145,14 +145,14 @@ class Mapper implements MapperInterface
         $mapping = $config->registerMapping('array', $destination);
         $props = $this->extractor->getProperties($destination);
 
-        if ($props === null) {
+        if (null === $props) {
             return;
         }
 
         foreach ($props as $property) {
             $type = $this->extractor->getType($destination, $property);
 
-            if ($type === null) {
+            if (null === $type) {
                 continue;
             }
 
@@ -199,7 +199,7 @@ class Mapper implements MapperInterface
                 return null;
             }
 
-            return $destinationClass === \DateTimeImmutable::class
+            return \DateTimeImmutable::class === $destinationClass
                 ? new \DateTimeImmutable($source[$property])
                 : new \DateTime($source[$property]);
         };
