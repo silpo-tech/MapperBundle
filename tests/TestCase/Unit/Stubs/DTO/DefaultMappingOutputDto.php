@@ -10,7 +10,7 @@ final class DefaultMappingOutputDto
      * @param DefaultMappingOutputDto[] $collection
      */
     public function __construct(
-        public DefaultMappingOutputDto|null $object,
+        public ?DefaultMappingOutputDto $object,
         public array $collection,
         public \DateTime $createdAt,
         public \DateTimeInterface $updatedAt,
