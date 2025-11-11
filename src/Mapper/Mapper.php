@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MapperBundle\Mapper;
 
 use AutoMapperPlus\AutoMapperInterface;
@@ -10,7 +12,9 @@ use AutoMapperPlus\MappingOperation\Operation;
 use MapperBundle\Configuration\AutoMapperConfig;
 use MapperBundle\PreLoader\PreloaderInterface;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
-use Symfony\Component\PropertyInfo\Type;
+use Symfony\Component\TypeInfo\Type\CollectionType;
+use Symfony\Component\TypeInfo\Type\NullableType;
+use Symfony\Component\TypeInfo\Type\ObjectType;
 
 /**
  * Class Mapper.
@@ -43,7 +47,7 @@ class Mapper implements MapperInterface
     }
 
     /**
-     * @param array|object        $source
+     * @param array|object $source
      * @param array|object|string $destination
      *
      * @return array|mixed|object|null
@@ -84,9 +88,11 @@ class Mapper implements MapperInterface
 
         $this->autoConfiguration(end($sources), $destination);
 
+        $configuration = $this->autoMapper->getConfiguration();
+
         if (
-            $this->autoMapper->getConfiguration() instanceof AutoMapperConfig
-            && true === $this->autoMapper->getConfiguration()->usePreLoad()
+            $configuration instanceof AutoMapperConfig
+            && true === $configuration->usePreLoad()
         ) {
             return $this->convertCollectionWithPreLoader($sources, $destination);
         }
@@ -109,17 +115,17 @@ class Mapper implements MapperInterface
 
         return $this->autoMapper->mapMultiple(
             $this->preLoader->preLoad($sources, $registeredMappingOperations),
-            $destination
+            $destination,
         );
     }
 
     /**
-     * @param array|object        $source
+     * @param array|object $source
      * @param array|object|string $destination
      */
     private function autoConfiguration($source, $destination): void
     {
-        $destination = is_object($destination) ? get_class($destination) : $destination;
+        $destination = is_object($destination) ? $destination::class : $destination;
         if (
             !is_array($source)
             || $this->autoMapper->getConfiguration()->hasMappingFor('array', $destination)
@@ -138,25 +144,40 @@ class Mapper implements MapperInterface
         }
         $mapping = $config->registerMapping('array', $destination);
         $props = $this->extractor->getProperties($destination);
+
+        if ($props === null) {
+            return;
+        }
+
         foreach ($props as $property) {
-            /** @var Type $propertyInfo */
-            $types = $this->extractor->getTypes($destination, $property);
-            if (!$types) {
+            $type = $this->extractor->getType($destination, $property);
+
+            if ($type === null) {
                 continue;
             }
-            $propertyInfo = $types[0];
-            $innerClass = false;
-            if ($types = $propertyInfo->getCollectionValueTypes()) {
-                $innerClass = $types[0]->getClassName();
-                $this->createSchemaForMapping($innerClass);
-                $mapping->forMember($property, Operation::mapTo($innerClass));
-            } elseif (is_a($propertyInfo->getClassName(), \DateTimeInterface::class, true)) {
-                $innerClass = $propertyInfo->getClassName();
-                $mapping->forMember($property, $this->getDateTimeMappingOperation($property, $innerClass));
-            } elseif ('object' === $propertyInfo->getBuiltinType()) {
-                $innerClass = $propertyInfo->getClassName();
-                $this->createSchemaForMapping($innerClass);
-                $mapping->forMember($property, Operation::mapTo($innerClass, true));
+
+            if ($type instanceof NullableType) {
+                $type = $type->getWrappedType();
+            }
+
+            if ($type instanceof CollectionType) {
+                $valueType = $type->getCollectionValueType();
+
+                if ($valueType instanceof ObjectType) {
+                    $innerClass = $valueType->getClassName();
+
+                    $this->createSchemaForMapping($innerClass);
+                    $mapping->forMember($property, Operation::mapTo($innerClass));
+                }
+            } elseif ($type instanceof ObjectType) {
+                $innerClass = $type->getClassName();
+
+                if (is_a($innerClass, \DateTimeInterface::class, true)) {
+                    $mapping->forMember($property, $this->getDateTimeMappingOperation($property, $innerClass));
+                } else {
+                    $this->createSchemaForMapping($innerClass);
+                    $mapping->forMember($property, Operation::mapTo($innerClass, true));
+                }
             }
         }
     }
@@ -173,12 +194,12 @@ class Mapper implements MapperInterface
 
     private function getDateTimeMappingOperation(string $property, string $destinationClass): callable
     {
-        return function ($source) use ($destinationClass, $property) {
+        return static function ($source) use ($destinationClass, $property) {
             if (null === $source[$property]) {
                 return null;
             }
 
-            return \DateTimeImmutable::class === $destinationClass
+            return $destinationClass === \DateTimeImmutable::class
                 ? new \DateTimeImmutable($source[$property])
                 : new \DateTime($source[$property]);
         };
