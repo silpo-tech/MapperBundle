@@ -48,7 +48,7 @@ class Mapper implements MapperInterface
     }
 
     /**
-     * @param array|object $source
+     * @param array|object        $source
      * @param array|object|string $destination
      *
      * @return array|mixed|object|null
@@ -121,7 +121,7 @@ class Mapper implements MapperInterface
     }
 
     /**
-     * @param array|object $source
+     * @param array|object        $source
      * @param array|object|string $destination
      */
     private function autoConfiguration($source, $destination): void
