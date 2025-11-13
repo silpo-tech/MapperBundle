@@ -12,6 +12,7 @@ use AutoMapperPlus\MappingOperation\Operation;
 use MapperBundle\Configuration\AutoMapperConfig;
 use MapperBundle\PreLoader\PreloaderInterface;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
+use Symfony\Component\PropertyInfo\Type;
 use Symfony\Component\TypeInfo\Type\CollectionType;
 use Symfony\Component\TypeInfo\Type\NullableType;
 use Symfony\Component\TypeInfo\Type\ObjectType;
@@ -47,7 +48,7 @@ class Mapper implements MapperInterface
     }
 
     /**
-     * @param array|object        $source
+     * @param array|object $source
      * @param array|object|string $destination
      *
      * @return array|mixed|object|null
@@ -120,7 +121,7 @@ class Mapper implements MapperInterface
     }
 
     /**
-     * @param array|object        $source
+     * @param array|object $source
      * @param array|object|string $destination
      */
     private function autoConfiguration($source, $destination): void
@@ -133,6 +134,13 @@ class Mapper implements MapperInterface
             return;
         }
 
+        // check for version symfony/property-info (v6.0.0) compatibility
+        if (!class_exists(Symfony\Component\PropertyInfo\PropertyInfoExtractor::class)) {
+            $this->createSchemaForMappingOld($destination);
+
+            return;
+        }
+
         $this->createSchemaForMapping($destination);
     }
 
@@ -142,7 +150,8 @@ class Mapper implements MapperInterface
         if (null !== $config->getMappingFor(DataType::ARRAY, $destination)) {
             return;
         }
-        $mapping = $config->registerMapping('array', $destination);
+        $mapping = $config->registerMapping(DataType::ARRAY, $destination);
+
         $props = $this->extractor->getProperties($destination);
 
         if (null === $props) {
@@ -178,6 +187,41 @@ class Mapper implements MapperInterface
                     $this->createSchemaForMapping($innerClass);
                     $mapping->forMember($property, Operation::mapTo($innerClass, true));
                 }
+            }
+        }
+    }
+
+    public function createSchemaForMappingOld(string $destination): void
+    {
+        $config = $this->autoMapper->getConfiguration();
+        if (null !== $config->getMappingFor(DataType::ARRAY, $destination)) {
+            return;
+        }
+
+        $mapping = $config->registerMapping(DataType::ARRAY, $destination);
+
+        $props = $this->extractor->getProperties($destination);
+
+        foreach ($props as $property) {
+            /** @var Type[]|null $types */
+            $types = $this->extractor->getTypes($destination, $property);
+            if (!$types) {
+                continue;
+            }
+
+            $propertyInfo = $types[0];
+            $innerClass = false;
+            if ($types = $propertyInfo->getCollectionValueTypes()) {
+                $innerClass = $types[0]->getClassName();
+                $this->createSchemaForMappingOld($innerClass);
+                $mapping->forMember($property, Operation::mapTo($innerClass));
+            } elseif (is_a($propertyInfo->getClassName(), \DateTimeInterface::class, true)) {
+                $innerClass = $propertyInfo->getClassName();
+                $mapping->forMember($property, $this->getDateTimeMappingOperation($property, $innerClass));
+            } elseif ('object' === $propertyInfo->getBuiltinType()) {
+                $innerClass = $propertyInfo->getClassName();
+                $this->createSchemaForMappingOld($innerClass);
+                $mapping->forMember($property, Operation::mapTo($innerClass, true));
             }
         }
     }

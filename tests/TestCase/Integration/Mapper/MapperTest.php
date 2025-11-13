@@ -9,6 +9,7 @@ use MapperBundle\Mapper\Mapper;
 use MapperBundle\PreLoader\NullPreLoader;
 use MapperBundle\Tests\TestCase\Unit\Stubs\DTO\DefaultMappingOutputDto;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\PropertyInfo\Extractor\ConstructorExtractor;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
@@ -26,6 +27,7 @@ class MapperTest extends TestCase
                     new ReflectionExtractor(),
                 ],
                 [
+                    new ConstructorExtractor([new PhpDocExtractor(), new ReflectionExtractor()]),
                     new PhpDocExtractor(),
                     new ReflectionExtractor(),
                 ],
